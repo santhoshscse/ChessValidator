@@ -19,7 +19,7 @@ public class ChessBoardManager {
 	}
 
 	public String move(String input) throws Exception {
-		Command command = commandReader.getAsMoveCommand(input);
+		Command command = commandReader.getAsCommand(input);
 		Move move = pieceHandler.validateCommandAndGetMove(command.getSourcePiece(), boardHandler.getBoard(),
 				boardHandler.getCurrentPlayer(), command);
 		boardHandler.makeMove(move);

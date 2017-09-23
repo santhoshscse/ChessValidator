@@ -20,7 +20,7 @@ public class PawnMoveValidator implements PieceMoveValidator {
 		Location target = command.getTargetLocation();
 		boolean isCapture = command.isCapture();
 
-		source = getMove(board, player, source, target, isCapture);
+		source = fillSource(board, player, source, target, isCapture);
 
 		Move move = new Move();
 		move.setCapture(isCapture);
@@ -56,7 +56,7 @@ public class PawnMoveValidator implements PieceMoveValidator {
 		return "-";
 	}
 
-	private Location getMove(Board board, Player player, Location source, Location target, boolean isCapture)
+	private Location fillSource(Board board, Player player, Location source, Location target, boolean isCapture)
 			throws Exception {
 		char sourceFile = 0;
 		char sourceRank = 0;
@@ -65,11 +65,11 @@ public class PawnMoveValidator implements PieceMoveValidator {
 			sourceRank = source.getRank();
 		}
 		if (isEmpty(sourceFile) && isEmpty(sourceRank)) {
-			source = getMove(board, player, target, isCapture);
+			source = fillSource(board, player, target, isCapture);
 		} else if (!isEmpty(sourceFile) && isEmpty(sourceRank)) {
-			source = getMoveWithFile(board, player, sourceFile, target, isCapture);
+			source = fillSourceWithFile(board, player, sourceFile, target, isCapture);
 		} else if (isEmpty(sourceFile) && !isEmpty(sourceRank)) {
-			source = getMoveWithRank(board, player, sourceRank, target, isCapture);
+			source = fillSourceWithRank(board, player, sourceRank, target, isCapture);
 		}
 		if (source == null || isEmpty(source.getFile()) || isEmpty(source.getRank())) {
 			throw new Exception("No source found");
@@ -78,7 +78,7 @@ public class PawnMoveValidator implements PieceMoveValidator {
 
 	}
 
-	private Location getMoveWithRank(Board board, Player player, char sourceRank, Location target, boolean isCapture)
+	private Location fillSourceWithRank(Board board, Player player, char sourceRank, Location target, boolean isCapture)
 			throws Exception {
 
 		boolean isWhite;
@@ -113,7 +113,7 @@ public class PawnMoveValidator implements PieceMoveValidator {
 
 	}
 
-	private Location getMoveWithFile(Board board, Player player, char sourceFile, Location target, boolean isCapture)
+	private Location fillSourceWithFile(Board board, Player player, char sourceFile, Location target, boolean isCapture)
 			throws Exception {
 		boolean isWhite;
 		if (player == Player.W) {
@@ -179,7 +179,7 @@ public class PawnMoveValidator implements PieceMoveValidator {
 		return source;
 	}
 
-	private Location getMove(Board board, Player player, Location target, boolean isCapture) throws Exception {
+	private Location fillSource(Board board, Player player, Location target, boolean isCapture) throws Exception {
 		boolean isWhite;
 		if (player == Player.W) {
 			isWhite = true;

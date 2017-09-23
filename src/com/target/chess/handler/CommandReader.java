@@ -7,7 +7,7 @@ import com.target.chess.util.CommandUtil;
 import com.target.chess.util.PieceUtil;
 
 public class CommandReader {
-	public Command getAsMoveCommand(String input) throws Exception {
+	public Command getAsCommand(String input) throws Exception {
 		if (input.length() <= 1) {
 			throw new Exception("Invalid input");
 		}
