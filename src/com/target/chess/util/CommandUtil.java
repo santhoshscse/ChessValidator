@@ -1,9 +1,8 @@
 package com.target.chess.util;
 
 import com.target.chess.model.Location;
-import com.target.chess.model.Piece;
 
-public class MoveUtil {
+public class CommandUtil {
 
 	public static Object[] getTarget(String input) {
 		int length = input.length();
@@ -26,10 +25,6 @@ public class MoveUtil {
 			}
 		}
 		return new Object[] { input, isCapture };
-	}
-
-	public static boolean isSame(Piece srcPiece, Piece tarPiece) {
-		return srcPiece.isWhite() == tarPiece.isWhite();
 	}
 
 }

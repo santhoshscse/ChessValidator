@@ -9,7 +9,7 @@ import com.target.chess.model.Move;
 import com.target.chess.model.Piece;
 import com.target.chess.model.PieceType;
 import com.target.chess.model.Player;
-import com.target.chess.util.MoveUtil;
+import com.target.chess.util.ChessUtil;
 
 public class PawnMoveValidator implements PieceMoveValidator {
 
@@ -20,11 +20,20 @@ public class PawnMoveValidator implements PieceMoveValidator {
 		Location target = command.getTargetLocation();
 		boolean isCapture = command.isCapture();
 
-		Move move = getMove(board, player, source, target, isCapture);
+		source = getMove(board, player, source, target, isCapture);
+
+		Move move = new Move();
+		move.setCapture(isCapture);
+		move.setPlayer(player);
+		move.setSourceLocation(source);
+		move.setTargetLocation(target);
 
 		Piece srcPiece = board.getPieceByLocation(source);
 		Piece tarPiece = board.getPieceByLocation(target);
-		if (MoveUtil.isSame(srcPiece, tarPiece)) {
+		if (isCapture && tarPiece == null) {
+			throw new Exception("target is empty to capture");
+		}
+		if (ChessUtil.isSameCategory(srcPiece, tarPiece)) {
 			throw new Exception("source & target pieces are same category");
 		}
 		move.setSourcePiece(srcPiece);
@@ -47,7 +56,7 @@ public class PawnMoveValidator implements PieceMoveValidator {
 		return "-";
 	}
 
-	private Move getMove(Board board, Player player, Location source, Location target, boolean isCapture)
+	private Location getMove(Board board, Player player, Location source, Location target, boolean isCapture)
 			throws Exception {
 		char sourceFile = 0;
 		char sourceRank = 0;
@@ -62,15 +71,11 @@ public class PawnMoveValidator implements PieceMoveValidator {
 		} else if (isEmpty(sourceFile) && !isEmpty(sourceRank)) {
 			source = getMoveWithRank(board, player, sourceRank, target, isCapture);
 		}
+		if (source == null || isEmpty(source.getFile()) || isEmpty(source.getRank())) {
+			throw new Exception("No source found");
+		}
+		return source;
 
-		Move move = new Move();
-		move.setCapture(isCapture);
-		move.setPlayer(player);
-		move.setSourceLocation(source);
-		move.setTargetLocation(target);
-		move.setSourcePiece(board.getPieceByLocation(source));
-		move.setTargetPiece(board.getPieceByLocation(target));
-		return move;
 	}
 
 	private Location getMoveWithRank(Board board, Player player, char sourceRank, Location target, boolean isCapture)
@@ -104,7 +109,6 @@ public class PawnMoveValidator implements PieceMoveValidator {
 				tmpLoc = loc;
 			}
 		}
-
 		return source;
 
 	}
@@ -137,15 +141,15 @@ public class PawnMoveValidator implements PieceMoveValidator {
 
 				if (isCapture) {
 
-					if (loc.getRank() - 1 == target.getRank() && sourceFile == target.getFile()) {
+					if (loc.getRank() + 1 == target.getRank() && sourceFile == target.getFile()) {
 						tmpLoc = loc;
 					}
 
 				} else {
 
-					if (loc.getRank() - 1 == target.getRank() && sourceFile == target.getFile()) {
+					if (loc.getRank() + 1 == target.getRank() && sourceFile == target.getFile()) {
 						tmpLoc = loc;
-					} else if (loc.getRank() == 6 && loc.getRank() - 2 == target.getRank()
+					} else if (loc.getRank() == '2' && loc.getRank() + 2 == target.getRank()
 							&& sourceFile == target.getFile()) {
 						tmpLoc = loc;
 					}
@@ -156,15 +160,15 @@ public class PawnMoveValidator implements PieceMoveValidator {
 
 				if (isCapture) {
 
-					if (loc.getRank() + 1 == target.getRank() && sourceFile == target.getFile()) {
+					if (loc.getRank() - 1 == target.getRank() && sourceFile == target.getFile()) {
 						tmpLoc = loc;
 					}
 
 				} else {
 
-					if (loc.getRank() + 1 == target.getRank() && sourceFile == target.getFile()) {
+					if (loc.getRank() - 1 == target.getRank() && sourceFile == target.getFile()) {
 						tmpLoc = loc;
-					} else if (loc.getRank() == 1 && sourceFile == target.getRank()
+					} else if (loc.getRank() == '7' && sourceFile == target.getRank()
 							&& loc.getFile() == target.getFile()) {
 						tmpLoc = loc;
 					}
@@ -172,7 +176,6 @@ public class PawnMoveValidator implements PieceMoveValidator {
 				}
 			}
 		}
-
 		return source;
 	}
 
@@ -203,27 +206,6 @@ public class PawnMoveValidator implements PieceMoveValidator {
 
 				if (isCapture) {
 
-					if (loc.getRank() - 1 == target.getRank() && loc.getFile() - 1 == target.getFile()) {
-						tmpLoc = loc;
-					} else if (loc.getRank() - 1 == target.getRank() && loc.getFile() + 1 == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				} else {
-
-					if (loc.getRank() - 1 == target.getRank() && loc.getFile() == target.getFile()) {
-						tmpLoc = loc;
-					} else if (tmpLoc == null && loc.getRank() == 6 && loc.getRank() - 2 == target.getRank()
-							&& loc.getFile() == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				}
-
-			} else {
-
-				if (isCapture) {
-
 					if (loc.getRank() + 1 == target.getRank() && loc.getFile() - 1 == target.getFile()) {
 						tmpLoc = loc;
 					} else if (loc.getRank() + 1 == target.getRank() && loc.getFile() + 1 == target.getFile()) {
@@ -234,7 +216,28 @@ public class PawnMoveValidator implements PieceMoveValidator {
 
 					if (loc.getRank() + 1 == target.getRank() && loc.getFile() == target.getFile()) {
 						tmpLoc = loc;
-					} else if (tmpLoc == null && loc.getRank() == 1 && loc.getRank() + 2 == target.getRank()
+					} else if (tmpLoc == null && loc.getRank() == '2' && loc.getRank() + 2 == target.getRank()
+							&& loc.getFile() == target.getFile()) {
+						tmpLoc = loc;
+					}
+
+				}
+
+			} else {
+
+				if (isCapture) {
+
+					if (loc.getRank() - 1 == target.getRank() && loc.getFile() - 1 == target.getFile()) {
+						tmpLoc = loc;
+					} else if (loc.getRank() - 1 == target.getRank() && loc.getFile() + 1 == target.getFile()) {
+						tmpLoc = loc;
+					}
+
+				} else {
+
+					if (loc.getRank() - 1 == target.getRank() && loc.getFile() == target.getFile()) {
+						tmpLoc = loc;
+					} else if (loc.getRank() == '7' && loc.getRank() - 2 == target.getRank()
 							&& loc.getFile() == target.getFile()) {
 						tmpLoc = loc;
 					}
@@ -242,34 +245,11 @@ public class PawnMoveValidator implements PieceMoveValidator {
 				}
 			}
 		}
-
 		return source;
 	}
 
 	private boolean isEmpty(char file) {
 		return Character.MIN_VALUE == file;
 	}
-
-	// @Override
-	// public String getEnPassant(Move move) {
-	// int fromFile = move.getFromFile();
-	// int fromRank = move.getFromRank();
-	//
-	// int toFile = move.getToFile();
-	// int toRank = move.getToRank();
-	//
-	// if (fromFile == toFile) {
-	// if (Math.abs(fromRank - toRank) == 2) {
-	// if (fromRank > toRank) {
-	// return ChessUtil.getAsFile(fromFile) + "" + ChessUtil.getAsRank(toRank +
-	// 1);
-	// } else {
-	// return ChessUtil.getAsFile(fromFile) + "" + ChessUtil.getAsRank(toRank -
-	// 1);
-	// }
-	// }
-	// }
-	// return "-";
-	// }
 
 }

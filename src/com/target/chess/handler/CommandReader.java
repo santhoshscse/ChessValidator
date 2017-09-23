@@ -3,7 +3,7 @@ package com.target.chess.handler;
 import com.target.chess.model.Command;
 import com.target.chess.model.Location;
 import com.target.chess.model.PieceType;
-import com.target.chess.util.MoveUtil;
+import com.target.chess.util.CommandUtil;
 import com.target.chess.util.PieceUtil;
 
 public class CommandReader {
@@ -13,11 +13,11 @@ public class CommandReader {
 		}
 		Object[] res = null;
 
-		res = MoveUtil.getTarget(input);
+		res = CommandUtil.getTarget(input);
 		input = (String) res[0];
 		Location target = (Location) res[1];
 
-		res = MoveUtil.getCapture(input);
+		res = CommandUtil.getCapture(input);
 		input = (String) res[0];
 		boolean isCapture = (boolean) res[1];
 

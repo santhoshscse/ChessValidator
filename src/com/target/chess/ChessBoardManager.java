@@ -18,11 +18,12 @@ public class ChessBoardManager {
 		boardHandler = new ChessBoardHandler();
 	}
 
-	public void move(String input) throws Exception {
+	public String move(String input) throws Exception {
 		Command command = commandReader.getAsMoveCommand(input);
 		Move move = pieceHandler.validateCommandAndGetMove(command.getSourcePiece(), boardHandler.getBoard(),
 				boardHandler.getCurrentPlayer(), command);
 		boardHandler.makeMove(move);
+		return display();
 	}
 
 	public String display() {

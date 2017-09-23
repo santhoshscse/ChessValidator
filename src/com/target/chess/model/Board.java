@@ -26,17 +26,20 @@ public class Board implements Cloneable {
 				if (piece >= '1' && piece <= '8') {
 					int num = piece - '0';
 					for (int k = 0; k < num; k++) {
-						elements[rankNo][fileNo] = null;
+
+						char asFile = getAsFileChar(fileNo);
+						char asRank = getAsRankChar(rankNo);
+						Piece p = null;
+						Location loc = getAsLocation(asFile, asRank);
+						elements[rankNo][fileNo] = getAsSquare(loc, p);
 						fileNo++;
 					}
 				} else {
-					char asFile = (char) fileNo;
-					char asRank = (char) rankNo;
-
+					char asFile = getAsFileChar(fileNo);
+					char asRank = getAsRankChar(rankNo);
 					String id = piece + "" + asFile;
-					Location loc = getAsLocation(asFile, asRank);
 					Piece p = getAsPiece(id, piece);
-
+					Location loc = getAsLocation(asFile, asRank);
 					elements[rankNo][fileNo] = getAsSquare(loc, p);
 					pieceVSLocation.put(id, loc);
 				}
@@ -73,10 +76,12 @@ public class Board implements Cloneable {
 		for (int i = 0; i < 8; i++) {
 			int count = 0;
 			for (int j = 0; j < 8; j++) {
-				char piece = elements[i][j].getPiece().getName();
-				if (piece == '-') {
+				Piece pieceObj = elements[i][j].getPiece();
+
+				if (pieceObj == null) {
 					count++;
 				} else {
+					char piece = pieceObj.getName();
 					if (count != 0) {
 						builder.append(count);
 						count = 0;
@@ -119,17 +124,33 @@ public class Board implements Cloneable {
 	}
 
 	public Piece getPieceByLocation(Location loc) {
-		int file = loc.getFile() - 'a';
-		int rank = loc.getRank() - '1';
+		int file = getAsFileNo(loc.getFile());
+		int rank = getAsRankNo(loc.getRank());
 		return elements[rank][file].getPiece();
 	}
 
-	public void movePiece(Location sourceLocation, Location targetLocation) {
-		int srcFile = sourceLocation.getFile() - 'a';
-		int srcRank = sourceLocation.getRank() - '1';
+	private char getAsRankChar(int rankNo) {
+		return (char) (Math.abs(8 - rankNo) + '0');
+	}
 
-		int tarFile = targetLocation.getFile() - 'a';
-		int tarRank = targetLocation.getRank() - '1';
+	private char getAsFileChar(int fileNo) {
+		return (char) (fileNo + (int) 'a');
+	}
+
+	private int getAsRankNo(char rank) {
+		return '8' - rank;
+	}
+
+	private int getAsFileNo(char file) {
+		return file - 'a';
+	}
+
+	public void movePiece(Location sourceLocation, Location targetLocation) {
+		int srcFile = getAsFileNo(sourceLocation.getFile());
+		int srcRank = getAsRankNo(sourceLocation.getRank());
+
+		int tarFile = getAsFileNo(targetLocation.getFile());
+		int tarRank = getAsRankNo(targetLocation.getRank());
 
 		Piece piece = elements[srcRank][srcFile].getPiece();
 		elements[tarRank][tarFile].setPiece(piece);
