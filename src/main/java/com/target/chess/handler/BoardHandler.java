@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.target.chess.model.Board;
+import com.target.chess.model.Location;
 import com.target.chess.model.Move;
 import com.target.chess.model.Player;
 import com.target.chess.util.PlayerUtil;
@@ -12,7 +13,7 @@ class BoardHandler {
 	private Board board;
 	private Player nextPlayer;
 	private String castling;
-	private String enPassant;
+	private Location enPassant;
 	private int halfMoveClock;
 	private int fullMoveNo;
 	private List<Move> moveList;
@@ -27,10 +28,21 @@ class BoardHandler {
 		board = new Board(strArr[0]);
 		nextPlayer = PlayerUtil.getPlayerType(strArr[1]);
 		castling = strArr[2];
-		enPassant = strArr[3];
+		enPassant = getAsLoc(strArr[3]);
 		halfMoveClock = Integer.parseInt(strArr[4]);
 		fullMoveNo = Integer.parseInt(strArr[5]);
 		moveList = new ArrayList<>();
+	}
+
+	private Location getAsLoc(String loc) {
+		if (!loc.equals("-")) {
+			Location enPassantLoc = new Location();
+			enPassantLoc.setFile(loc.charAt(0));
+			enPassantLoc.setRank(loc.charAt(1));
+			return enPassantLoc;
+		}
+		return null;
+
 	}
 
 	public String display() {
@@ -38,7 +50,11 @@ class BoardHandler {
 		builder.append(board.toFen());
 		builder.append(" " + PlayerUtil.getPlayerName(nextPlayer));
 		builder.append(" " + castling);
-		builder.append(" " + enPassant);
+		if (enPassant == null) {
+			builder.append(" - ");
+		} else {
+			builder.append(" " + enPassant.getFile() + "" + enPassant.getRank());
+		}
 		builder.append(" " + halfMoveClock);
 		builder.append(" " + fullMoveNo);
 		return builder.toString();
@@ -80,7 +96,7 @@ class BoardHandler {
 	}
 
 	private void makeMoveInBoard(Move move) {
-		board.movePiece(move.getSourceLocation(), move.getTargetLocation());
+		board.movePiece(move.getSourceLocation(), move.getTargetLocation(), move.isEnPassantCapture());
 	}
 
 	public Player getCurrentPlayer() {
@@ -89,5 +105,15 @@ class BoardHandler {
 
 	public List<Move> getMoveList() {
 		return moveList;
+	}
+
+	public Location getEnPassant() {
+		if (enPassant != null) {
+			Location loc = new Location();
+			loc.setFile(enPassant.getFile());
+			loc.setRank(enPassant.getRank());
+			return loc;
+		}
+		return null;
 	}
 }

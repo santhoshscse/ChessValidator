@@ -23,17 +23,22 @@ public class PawnMoveValidator extends PieceMoveValidator {
 	}
 
 	@Override
-	public String getEnPassant(Board board, Location source, Location target) {
+	public Location getEnPassant(Board board, Location source, Location target) {
+		Location loc = null;
 		if (source.getFile() == target.getFile()) {
 			if (source.getRank() - target.getRank() == 2) {
 				char tmpRank = (char) (source.getRank() - 1);
-				return source.getFile() + "" + tmpRank;
+				loc = new Location();
+				loc.setFile(source.getFile());
+				loc.setRank(tmpRank);
 			} else if (target.getRank() - source.getRank() == 2) {
 				char tmpRank = (char) (target.getRank() - 1);
-				return source.getFile() + "" + tmpRank;
+				loc = new Location();
+				loc.setFile(source.getFile());
+				loc.setRank(tmpRank);
 			}
 		}
-		return "-";
+		return loc;
 	}
 
 	private Location fillSource(Board board, Player player, Location source, Location target, boolean isCapture)

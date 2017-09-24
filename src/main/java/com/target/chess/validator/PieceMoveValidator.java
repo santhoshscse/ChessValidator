@@ -5,6 +5,7 @@ import com.target.chess.model.Command;
 import com.target.chess.model.Location;
 import com.target.chess.model.Move;
 import com.target.chess.model.Piece;
+import com.target.chess.model.PieceType;
 import com.target.chess.model.Player;
 import com.target.chess.util.ChessUtil;
 
@@ -14,7 +15,8 @@ public abstract class PieceMoveValidator {
 		MoveAlongRank, MoveAlongFile, MoveAlongFileRank;
 	}
 
-	public final Move validateCommandAndGetMove(Board board, Player player, Command command) throws Exception {
+	public final Move validateCommandAndGetMove(Board board, Player player, Command command, Location enPassantLoc)
+			throws Exception {
 		boolean isCapture = command.isCapture();
 		Location target = command.getTargetLocation();
 
@@ -29,7 +31,7 @@ public abstract class PieceMoveValidator {
 		Piece srcPiece = board.getPieceByLocation(source);
 		Piece tarPiece = board.getPieceByLocation(target);
 
-		validateCapture(isCapture, tarPiece);
+		validateCaptureOrEnPassantCapture(enPassantLoc, isCapture, target, move, srcPiece, tarPiece);
 
 		validateCategory(srcPiece, tarPiece);
 
@@ -41,10 +43,42 @@ public abstract class PieceMoveValidator {
 
 	}
 
+	private void validateCaptureOrEnPassantCapture(Location enPassant, boolean isCapture, Location target, Move move,
+			Piece srcPiece, Piece tarPiece) throws Exception {
+		boolean isEnPassantMove = enPassant != null && srcPiece.getPieceType() == PieceType.P
+				&& enPassant.getFile() == target.getFile() && enPassant.getRank() == target.getRank();
+
+		boolean validMove = false;
+		if (isCapture) {
+			if (tarPiece != null) {
+				validMove = true;
+			} else if (isEnPassantMove) {
+				validMove = true;
+			}
+		} else {
+			if (tarPiece == null) {
+				validMove = true;
+			} else if (!isEnPassantMove) {
+				validMove = true;
+			}
+		}
+		if (validMove) {
+			move.setEnPassantCapture(isEnPassantMove);
+		}
+
+		if (!validMove) {
+			if (isCapture) {
+				throw new Exception("target is empty to capture or not enPassant capture");
+			} else {
+				throw new Exception("target is not empty or it must be enPassantCapture");
+			}
+		}
+	}
+
 	public abstract Location getSourceLocation(Board borad, Player player, Command command) throws Exception;
 
-	public String getEnPassant(Board board, Location source, Location target) {
-		return "-";
+	public Location getEnPassant(Board board, Location source, Location target) {
+		return null;
 	}
 
 	private void validateCategory(Piece srcPiece, Piece tarPiece) throws Exception {
@@ -53,7 +87,17 @@ public abstract class PieceMoveValidator {
 		}
 	}
 
-	private void validateCapture(boolean isCapture, Piece tarPiece) throws Exception {
+	private void validateCapture(Board board, Location enPassant, Location target, boolean isCapture, Piece tarPiece,
+			Move move) throws Exception {
+		if (isCapture) {
+			if (tarPiece != null) {
+				return;
+			} else if (enPassant != null && enPassant.getFile() == target.getFile()
+					&& enPassant.getRank() == target.getRank()) {
+				move.setEnPassantCapture(true);
+				return;
+			}
+		}
 		if (isCapture && tarPiece == null) {
 			throw new Exception("target is empty to capture");
 		} else if (!isCapture && tarPiece != null) {

@@ -149,18 +149,26 @@ public class Board implements Cloneable {
 		return file - 'a';
 	}
 
-	public void movePiece(Location sourceLocation, Location targetLocation) {
+	public void movePiece(Location sourceLocation, Location targetLocation, boolean isEnPassantCpature) {
 		int srcFile = getAsFileNo(sourceLocation.getFile());
 		int srcRank = getAsRankNo(sourceLocation.getRank());
 
 		int tarFile = getAsFileNo(targetLocation.getFile());
 		int tarRank = getAsRankNo(targetLocation.getRank());
 
-		Piece piece = elements[srcRank][srcFile].getPiece();
-		elements[tarRank][tarFile].setPiece(piece);
+		Piece tarPiece = elements[tarRank][tarFile].getPiece();
+		Piece srcPiece = elements[srcRank][srcFile].getPiece();
+		elements[tarRank][tarFile].setPiece(srcPiece);
 		elements[srcRank][srcFile].setPiece(null);
+		pieceVSLocation.put(srcPiece.getId(), targetLocation);
 
-		pieceVSLocation.put(piece.getId(), targetLocation);
+		if (tarPiece == null && isEnPassantCpature) {
+			tarPiece = elements[srcRank][tarFile].getPiece();
+		}
+		if (tarPiece != null) {
+			elements[srcRank][tarFile].setPiece(null);
+			pieceVSLocation.remove(tarPiece.getId());
+		}
 	}
 
 }

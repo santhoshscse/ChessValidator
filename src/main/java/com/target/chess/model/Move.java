@@ -2,12 +2,13 @@ package com.target.chess.model;
 
 public class Move {
 	private boolean isCapture;
+	private boolean isEnPassantCapture;
 	private Location targetLocation;
 	private Location sourceLocation;
 	private Piece sourcePiece;
 	private Piece targetPiece;
 	private Player player;
-	private String enPassant;
+	private Location enPassant;
 
 	public boolean isCapture() {
 		return isCapture;
@@ -15,6 +16,14 @@ public class Move {
 
 	public void setCapture(boolean isCapture) {
 		this.isCapture = isCapture;
+	}
+
+	public boolean isEnPassantCapture() {
+		return isEnPassantCapture;
+	}
+
+	public void setEnPassantCapture(boolean isEnPassantCapture) {
+		this.isEnPassantCapture = isEnPassantCapture;
 	}
 
 	public Location getTargetLocation() {
@@ -41,11 +50,11 @@ public class Move {
 		this.player = player;
 	}
 
-	public String getEnPassant() {
+	public Location getEnPassant() {
 		return enPassant;
 	}
 
-	public void setEnPassant(String enPassant) {
+	public void setEnPassant(Location enPassant) {
 		this.enPassant = enPassant;
 	}
 

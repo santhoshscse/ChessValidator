@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.target.chess.model.Board;
 import com.target.chess.model.Command;
+import com.target.chess.model.Location;
 import com.target.chess.model.Move;
 import com.target.chess.model.PieceType;
 import com.target.chess.model.Player;
@@ -26,8 +27,8 @@ class CommandValidator {
 		handlers.put(PieceType.Q, new QueenMoveValidator());
 	}
 
-	public Move validateCommandAndGetMove(PieceType type, Board board, Player player, Command command)
-			throws Exception {
-		return handlers.get(type).validateCommandAndGetMove(board, player, command);
+	public Move validateCommandAndGetMove(PieceType type, Board board, Player player, Command command,
+			Location enPassantLoc) throws Exception {
+		return handlers.get(type).validateCommandAndGetMove(board, player, command, enPassantLoc);
 	}
 }

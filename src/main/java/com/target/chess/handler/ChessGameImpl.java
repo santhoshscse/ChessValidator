@@ -24,7 +24,7 @@ class ChessGameImpl implements ChessGame {
 	public String move(String input) throws Exception {
 		Command command = commandReader.getAsCommand(input);
 		Move move = commandValidator.validateCommandAndGetMove(command.getSourcePiece(), boardHandler.getBoard(),
-				boardHandler.getCurrentPlayer(), command);
+				boardHandler.getCurrentPlayer(), command, boardHandler.getEnPassant());
 		boardHandler.makeMove(move);
 		return display();
 	}
