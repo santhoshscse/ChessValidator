@@ -8,7 +8,7 @@ import com.target.chess.model.Move;
 import com.target.chess.model.Player;
 import com.target.chess.util.PlayerUtil;
 
-class ChessBoardHandler {
+class BoardHandler {
 	private Board board;
 	private Player nextPlayer;
 	private String castling;
@@ -17,7 +17,7 @@ class ChessBoardHandler {
 	private int fullMoveNo;
 	private List<Move> moveList;
 
-	public ChessBoardHandler() throws Exception {
+	public BoardHandler() throws Exception {
 		init();
 	}
 
