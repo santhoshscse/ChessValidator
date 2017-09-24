@@ -1,6 +1,6 @@
 package com.target.chess;
 
-import com.target.chess.ChessBoardManager;
+import com.target.chess.handler.ChessGameFactory;
 
 public class ChessCommandTest {
 	public static void main(String[] args) throws Exception {
@@ -17,7 +17,7 @@ public class ChessCommandTest {
 
 	private static void kingMoveTest() throws Exception {
 		try {
-			ChessBoardManager game = new ChessBoardManager();
+			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
 			System.out.println(out);
 			out = game.move("f3");
@@ -38,7 +38,7 @@ public class ChessCommandTest {
 
 	private static void queenMoveTest() throws Exception {
 		try {
-			ChessBoardManager game = new ChessBoardManager();
+			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
 			System.out.println(out);
 			out = game.move("e3");
@@ -55,7 +55,7 @@ public class ChessCommandTest {
 
 	private static void bishopMoveTest() throws Exception {
 		try {
-			ChessBoardManager game = new ChessBoardManager();
+			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
 			System.out.println(out);
 			out = game.move("d3");
@@ -72,7 +72,7 @@ public class ChessCommandTest {
 
 	private static void knightMoveTest() throws Exception {
 		try {
-			ChessBoardManager game = new ChessBoardManager();
+			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
 			System.out.println(out);
 			out = game.move("Na3");
@@ -89,7 +89,7 @@ public class ChessCommandTest {
 
 	private static void rookMoveTest() throws Exception {
 		try {
-			ChessBoardManager game = new ChessBoardManager();
+			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
 			System.out.println(out);
 

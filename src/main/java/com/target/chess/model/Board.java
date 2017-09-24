@@ -23,7 +23,7 @@ public class Board implements Cloneable {
 			String row = strArr[rankNo];
 			int sLen = row.length();
 			int cIndex = 0;
-			for (int fileNo = 0; fileNo < 8; ) {
+			for (int fileNo = 0; fileNo < 8;) {
 				char piece = row.charAt(cIndex++);
 				if (piece >= '1' && piece <= '8') {
 					int num = piece - '0';

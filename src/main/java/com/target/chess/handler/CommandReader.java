@@ -6,7 +6,7 @@ import com.target.chess.model.PieceType;
 import com.target.chess.util.CommandUtil;
 import com.target.chess.util.PieceUtil;
 
-public class CommandReader {
+class CommandReader {
 	public Command getAsCommand(String input) throws Exception {
 		if (input.length() <= 1) {
 			throw new Exception("Invalid input");

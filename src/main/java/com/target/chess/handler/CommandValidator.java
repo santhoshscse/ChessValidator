@@ -15,7 +15,7 @@ import com.target.chess.validator.PieceMoveValidator;
 import com.target.chess.validator.KingMoveValidator;
 import com.target.chess.validator.RookMoveValidator;
 
-public class CommandValidator {
+class CommandValidator {
 	private static HashMap<PieceType, PieceMoveValidator> handlers = new HashMap<>();
 	static {
 		handlers.put(PieceType.P, new PawnMoveValidator());

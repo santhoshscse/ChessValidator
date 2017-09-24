@@ -8,7 +8,7 @@ import com.target.chess.model.Move;
 import com.target.chess.model.Player;
 import com.target.chess.util.PlayerUtil;
 
-public class ChessBoardHandler {
+class ChessBoardHandler {
 	private Board board;
 	private Player nextPlayer;
 	private String castling;
@@ -85,5 +85,9 @@ public class ChessBoardHandler {
 
 	public Player getCurrentPlayer() {
 		return nextPlayer;
+	}
+
+	public List<Move> getMoveList() {
+		return moveList;
 	}
 }
