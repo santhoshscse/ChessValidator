@@ -21,8 +21,10 @@ public class Board implements Cloneable {
 		String[] strArr = input.split("/");
 		for (int rankNo = 0; rankNo < 8; rankNo++) {
 			String row = strArr[rankNo];
-			for (int fileNo = 0; fileNo < row.length(); fileNo++) {
-				char piece = row.charAt(fileNo);
+			int sLen = row.length();
+			int cIndex = 0;
+			for (int fileNo = 0; fileNo < 8; ) {
+				char piece = row.charAt(cIndex++);
 				if (piece >= '1' && piece <= '8') {
 					int num = piece - '0';
 					for (int k = 0; k < num; k++) {
@@ -42,6 +44,7 @@ public class Board implements Cloneable {
 					Location loc = getAsLocation(asFile, asRank);
 					elements[rankNo][fileNo] = getAsSquare(loc, p);
 					pieceVSLocation.put(id, loc);
+					fileNo++;
 				}
 			}
 		}
@@ -119,6 +122,7 @@ public class Board implements Cloneable {
 		try {
 			return new Board(this.toFen());
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new CloneNotSupportedException("Error in cloning");
 		}
 	}

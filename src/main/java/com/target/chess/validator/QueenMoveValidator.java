@@ -10,9 +10,9 @@ import com.target.chess.model.PieceType;
 import com.target.chess.model.Player;
 import com.target.chess.util.ChessUtil;
 
-public class PawnMoveValidator extends PieceMoveValidator {
+public class QueenMoveValidator extends PieceMoveValidator {
 
-	private static final PieceType PAWN = PieceType.P;
+	private static final PieceType QUEEN = PieceType.Q;
 
 	@Override
 	public Location getSourceLocation(Board board, Player player, Command command) throws Exception {
@@ -20,20 +20,6 @@ public class PawnMoveValidator extends PieceMoveValidator {
 		Location target = command.getTargetLocation();
 		boolean isCapture = command.isCapture();
 		return fillSource(board, player, source, target, isCapture);
-	}
-
-	@Override
-	public String getEnPassant(Board board, Location source, Location target) {
-		if (source.getFile() == target.getFile()) {
-			if (source.getRank() - target.getRank() == 2) {
-				char tmpRank = (char) (source.getRank() - 1);
-				return source.getFile() + "" + tmpRank;
-			} else if (target.getRank() - source.getRank() == 2) {
-				char tmpRank = (char) (target.getRank() - 1);
-				return source.getFile() + "" + tmpRank;
-			}
-		}
-		return "-";
 	}
 
 	private Location fillSource(Board board, Player player, Location source, Location target, boolean isCapture)
@@ -47,9 +33,13 @@ public class PawnMoveValidator extends PieceMoveValidator {
 		if (ChessUtil.isEmpty(sourceFile) && ChessUtil.isEmpty(sourceRank)) {
 			source = fillSource(board, player, target, isCapture);
 		} else if (!ChessUtil.isEmpty(sourceFile) && ChessUtil.isEmpty(sourceRank)) {
-			source = fillSourceWithFile(board, player, sourceFile, target, isCapture);
+			if (ChessUtil.isSame(sourceFile, target.getFile())) {
+				source = fillSourceWithFile(board, player, sourceFile, target, isCapture);
+			}
 		} else if (ChessUtil.isEmpty(sourceFile) && !ChessUtil.isEmpty(sourceRank)) {
-			source = fillSourceWithRank(board, player, sourceRank, target, isCapture);
+			if (ChessUtil.isSame(sourceRank, target.getRank())) {
+				source = fillSourceWithRank(board, player, sourceRank, target, isCapture);
+			}
 		} else {
 			source = fillSourceWithFileRank(board, player, source, target, isCapture);
 		}
@@ -63,7 +53,7 @@ public class PawnMoveValidator extends PieceMoveValidator {
 	private Location fillSourceWithFileRank(Board board, Player player, Location source, Location target,
 			boolean isCapture) {
 		Piece srcPiece = board.getPieceByLocation(source);
-		if (srcPiece.getPieceType() == PAWN) {
+		if (srcPiece.getPieceType() == QUEEN) {
 			return source;
 		}
 		return null;
@@ -71,15 +61,13 @@ public class PawnMoveValidator extends PieceMoveValidator {
 
 	private Location fillSourceWithRank(Board board, Player player, char sourceRank, Location target, boolean isCapture)
 			throws Exception {
-
 		boolean isWhite = ChessUtil.isWhite(player);
 
-		List<Location> locList = board.getAllLocationsOfPiece(PAWN, isWhite);
+		List<Location> locList = board.getAllLocationsOfPiece(QUEEN, isWhite);
 
 		Location source = null;
 		Location tmpLoc = null;
 		for (Location loc : locList) {
-
 			if (tmpLoc != null) {
 				if (source == null) {
 					source = tmpLoc;
@@ -88,30 +76,27 @@ public class PawnMoveValidator extends PieceMoveValidator {
 					throw new Exception("Ambiguity");
 				}
 			}
-
-			if (loc.getRank() == sourceRank && loc.getFile() - 1 == target.getFile()) {
-				tmpLoc = loc;
-			} else if (loc.getRank() == sourceRank && loc.getFile() + 1 == target.getFile()) {
-				tmpLoc = loc;
+			if (loc.getRank() == sourceRank && loc.getFile() != target.getFile()) {
+				if (!isPieceExist(board, loc, target, MoveType.MoveAlongFile)) {
+					tmpLoc = loc;
+				}
 			}
 		}
 		if (source == null) {
 			source = tmpLoc;
 		}
 		return source;
-
 	}
 
 	private Location fillSourceWithFile(Board board, Player player, char sourceFile, Location target, boolean isCapture)
 			throws Exception {
 		boolean isWhite = ChessUtil.isWhite(player);
 
-		List<Location> locList = board.getAllLocationsOfPiece(PAWN, isWhite);
+		List<Location> locList = board.getAllLocationsOfPiece(QUEEN, isWhite);
 
 		Location source = null;
 		Location tmpLoc = null;
 		for (Location loc : locList) {
-
 			if (tmpLoc != null) {
 				if (source == null) {
 					source = tmpLoc;
@@ -120,43 +105,9 @@ public class PawnMoveValidator extends PieceMoveValidator {
 					throw new Exception("Ambiguity");
 				}
 			}
-
-			if (isWhite) {
-
-				if (isCapture) {
-
-					if (loc.getRank() + 1 == target.getRank() && sourceFile == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				} else {
-
-					if (loc.getRank() + 1 == target.getRank() && sourceFile == target.getFile()) {
-						tmpLoc = loc;
-					} else if (loc.getRank() == '2' && loc.getRank() + 2 == target.getRank()
-							&& sourceFile == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				}
-
-			} else {
-
-				if (isCapture) {
-
-					if (loc.getRank() - 1 == target.getRank() && sourceFile == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				} else {
-
-					if (loc.getRank() - 1 == target.getRank() && sourceFile == target.getFile()) {
-						tmpLoc = loc;
-					} else if (loc.getRank() == '7' && sourceFile == target.getRank()
-							&& loc.getFile() == target.getFile()) {
-						tmpLoc = loc;
-					}
-
+			if (loc.getRank() != target.getRank() && loc.getFile() == sourceFile) {
+				if (!isPieceExist(board, loc, target, MoveType.MoveAlongRank)) {
+					tmpLoc = loc;
 				}
 			}
 		}
@@ -169,12 +120,11 @@ public class PawnMoveValidator extends PieceMoveValidator {
 	private Location fillSource(Board board, Player player, Location target, boolean isCapture) throws Exception {
 		boolean isWhite = ChessUtil.isWhite(player);
 
-		List<Location> locList = board.getAllLocationsOfPiece(PAWN, isWhite);
+		List<Location> locList = board.getAllLocationsOfPiece(QUEEN, isWhite);
 
 		Location source = null;
 		Location tmpLoc = null;
 		for (Location loc : locList) {
-
 			if (tmpLoc != null) {
 				if (source == null) {
 					source = tmpLoc;
@@ -183,47 +133,11 @@ public class PawnMoveValidator extends PieceMoveValidator {
 					throw new Exception("Ambiguity");
 				}
 			}
-
-			if (isWhite) {
-
-				if (isCapture) {
-
-					if (loc.getRank() + 1 == target.getRank() && loc.getFile() - 1 == target.getFile()) {
-						tmpLoc = loc;
-					} else if (loc.getRank() + 1 == target.getRank() && loc.getFile() + 1 == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				} else {
-
-					if (loc.getRank() + 1 == target.getRank() && loc.getFile() == target.getFile()) {
-						tmpLoc = loc;
-					} else if (tmpLoc == null && loc.getRank() == '2' && loc.getRank() + 2 == target.getRank()
-							&& loc.getFile() == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				}
-
-			} else {
-
-				if (isCapture) {
-
-					if (loc.getRank() - 1 == target.getRank() && loc.getFile() - 1 == target.getFile()) {
-						tmpLoc = loc;
-					} else if (loc.getRank() - 1 == target.getRank() && loc.getFile() + 1 == target.getFile()) {
-						tmpLoc = loc;
-					}
-
-				} else {
-
-					if (loc.getRank() - 1 == target.getRank() && loc.getFile() == target.getFile()) {
-						tmpLoc = loc;
-					} else if (loc.getRank() == '7' && loc.getRank() - 2 == target.getRank()
-							&& loc.getFile() == target.getFile()) {
-						tmpLoc = loc;
-					}
-
+			int fileDiff = Math.abs(loc.getFile() - target.getFile());
+			int rankDiff = Math.abs(loc.getRank() - target.getRank());
+			if (fileDiff == rankDiff) {
+				if (!isPieceExist(board, loc, target, MoveType.MoveAlongFileRank)) {
+					tmpLoc = loc;
 				}
 			}
 		}
@@ -232,5 +146,4 @@ public class PawnMoveValidator extends PieceMoveValidator {
 		}
 		return source;
 	}
-
 }
