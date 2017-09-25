@@ -21,7 +21,6 @@ public class Board implements Cloneable {
 		String[] strArr = input.split("/");
 		for (int rankNo = 0; rankNo < 8; rankNo++) {
 			String row = strArr[rankNo];
-			int sLen = row.length();
 			int cIndex = 0;
 			for (int fileNo = 0; fileNo < 8;) {
 				char piece = row.charAt(cIndex++);

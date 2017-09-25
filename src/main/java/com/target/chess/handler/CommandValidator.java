@@ -9,11 +9,11 @@ import com.target.chess.model.Move;
 import com.target.chess.model.PieceType;
 import com.target.chess.model.Player;
 import com.target.chess.validator.BishopMoveValidator;
-import com.target.chess.validator.QueenMoveValidator;
+import com.target.chess.validator.KingMoveValidator;
 import com.target.chess.validator.KnightMoveValidator;
 import com.target.chess.validator.PawnMoveValidator;
 import com.target.chess.validator.PieceMoveValidator;
-import com.target.chess.validator.KingMoveValidator;
+import com.target.chess.validator.QueenMoveValidator;
 import com.target.chess.validator.RookMoveValidator;
 
 public class CommandValidator {

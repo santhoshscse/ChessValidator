@@ -1,6 +1,11 @@
 package com.target.chess.exception;
 
 public class MoveException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public enum ErrorCode {
 		CHECKMOVE, TARGETEMPTY, TARGETNOTEMPTY, INVALIDSOURCE, SAMECATEGORY, INVALIDRANK, INVALIDINPUT, INVALIDFILE, AMBIGIUTY,
 	}
