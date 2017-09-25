@@ -104,6 +104,18 @@ public class Board implements Cloneable {
 		return builder.toString();
 	}
 
+	public Location getLocationOfKing(boolean isWhite) {
+		char pieceName = PieceUtil.getPieceName(PieceType.K, isWhite);
+		for (char ch = 'a'; ch <= 'h'; ch++) {
+			String key = pieceName + "" + ch;
+			Location location = pieceVSLocation.get(key);
+			if (location != null) {
+				return location;
+			}
+		}
+		return null;
+	}
+
 	public List<Location> getAllLocationsOfPiece(PieceType pieceType, boolean isWhite) {
 		List<Location> list = new ArrayList<>();
 		char pieceName = PieceUtil.getPieceName(pieceType, isWhite);

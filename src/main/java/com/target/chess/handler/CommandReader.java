@@ -1,5 +1,7 @@
 package com.target.chess.handler;
 
+import com.target.chess.exception.MoveException;
+import com.target.chess.exception.MoveException.ErrorCode;
 import com.target.chess.model.Command;
 import com.target.chess.model.Location;
 import com.target.chess.model.PieceType;
@@ -9,7 +11,7 @@ import com.target.chess.util.PieceUtil;
 class CommandReader {
 	public Command getAsCommand(String input) throws Exception {
 		if (input.length() <= 1) {
-			throw new Exception("Invalid input");
+			throw new MoveException(ErrorCode.INVALIDINPUT);
 		}
 		Object[] res = null;
 

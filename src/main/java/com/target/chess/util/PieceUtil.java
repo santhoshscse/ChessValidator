@@ -1,5 +1,7 @@
 package com.target.chess.util;
 
+import com.target.chess.exception.MoveException;
+import com.target.chess.exception.MoveException.ErrorCode;
 import com.target.chess.model.PieceType;
 
 public class PieceUtil {
@@ -35,7 +37,7 @@ public class PieceUtil {
 		} else if (ch >= 'A' && ch <= 'Z') {
 			return true;
 		}
-		throw new Exception("Invalid input");
+		throw new MoveException(ErrorCode.INVALIDINPUT);
 	}
 
 	public static char getPieceName(PieceType type, boolean isWhite) {

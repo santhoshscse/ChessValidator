@@ -1,5 +1,9 @@
 package com.target.chess.validator;
 
+import java.util.List;
+
+import com.target.chess.exception.MoveException;
+import com.target.chess.exception.MoveException.ErrorCode;
 import com.target.chess.model.Board;
 import com.target.chess.model.Command;
 import com.target.chess.model.Location;
@@ -35,12 +39,57 @@ public abstract class PieceMoveValidator {
 
 		validateCategory(srcPiece, tarPiece);
 
+		validateCheckMove(board, move);
+
 		move.setSourcePiece(srcPiece);
 		move.setTargetPiece(tarPiece);
 
 		move.setEnPassant(getEnPassant(board, source, target));
 		return move;
 
+	}
+
+	private void validateCheckMove(Board board, Move move) throws Exception {
+		boolean isCheck = isCheckMove(board, move);
+		if (isCheck) {
+			throw new MoveException(ErrorCode.CHECKMOVE);
+		}
+	}
+
+	private boolean isCheckMove(Board board, Move move) {
+		board.movePiece(move.getSourceLocation(), move.getTargetLocation(), move.isEnPassantCapture());
+		Player player = move.getPlayer();
+		boolean isNextWhite;
+		if (player == Player.B) {
+			player = Player.W;
+			isNextWhite = true;
+		} else {
+			player = Player.B;
+			isNextWhite = false;
+		}
+		boolean isCurrWhite = !isNextWhite;
+		Location kingLoc = board.getLocationOfKing(isCurrWhite);
+
+		for (PieceType type : PieceType.values()) {
+			List<Location> locList = board.getAllLocationsOfPiece(type, isNextWhite);
+			for (Location srcLoc : locList) {
+				Command command = new Command();
+				command.setSourceLocation(srcLoc);
+				command.setTargetLocation(kingLoc);
+				command.setCapture(true);
+				command.setSourcePiece(type);
+				try {
+					Location validatedSrcLoc = getSourceLocation(board, player, command);
+					if (validatedSrcLoc != null) {
+						return true;
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
 	}
 
 	private void validateCaptureOrEnPassantCapture(Location enPassant, boolean isCapture, Location target, Move move,
@@ -68,9 +117,9 @@ public abstract class PieceMoveValidator {
 
 		if (!validMove) {
 			if (isCapture) {
-				throw new Exception("target is empty to capture or not enPassant capture");
+				throw new MoveException(ErrorCode.TARGETEMPTY);
 			} else {
-				throw new Exception("target is not empty or it must be enPassantCapture");
+				throw new MoveException(ErrorCode.TARGETNOTEMPTY);
 			}
 		}
 	}
@@ -83,25 +132,7 @@ public abstract class PieceMoveValidator {
 
 	private void validateCategory(Piece srcPiece, Piece tarPiece) throws Exception {
 		if (ChessUtil.isSameCategory(srcPiece, tarPiece)) {
-			throw new Exception("source & target pieces are same category");
-		}
-	}
-
-	private void validateCapture(Board board, Location enPassant, Location target, boolean isCapture, Piece tarPiece,
-			Move move) throws Exception {
-		if (isCapture) {
-			if (tarPiece != null) {
-				return;
-			} else if (enPassant != null && enPassant.getFile() == target.getFile()
-					&& enPassant.getRank() == target.getRank()) {
-				move.setEnPassantCapture(true);
-				return;
-			}
-		}
-		if (isCapture && tarPiece == null) {
-			throw new Exception("target is empty to capture");
-		} else if (!isCapture && tarPiece != null) {
-			throw new Exception("target is not empty, so it must be capture");
+			throw new MoveException(ErrorCode.SAMECATEGORY);
 		}
 	}
 

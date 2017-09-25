@@ -2,6 +2,8 @@ package com.target.chess.validator;
 
 import java.util.List;
 
+import com.target.chess.exception.MoveException;
+import com.target.chess.exception.MoveException.ErrorCode;
 import com.target.chess.model.Board;
 import com.target.chess.model.Command;
 import com.target.chess.model.Location;
@@ -44,7 +46,7 @@ public class BishopMoveValidator extends PieceMoveValidator {
 			source = fillSourceWithFileRank(board, player, source, target, isCapture);
 		}
 		if (source == null || ChessUtil.isEmpty(source.getFile()) || ChessUtil.isEmpty(source.getRank())) {
-			throw new Exception("No source found");
+			throw new MoveException(ErrorCode.INVALIDSOURCE);
 		}
 		return source;
 
@@ -73,7 +75,7 @@ public class BishopMoveValidator extends PieceMoveValidator {
 					source = tmpLoc;
 					tmpLoc = null;
 				} else {
-					throw new Exception("Ambiguity");
+					throw new MoveException(ErrorCode.AMBIGIUTY);
 				}
 			}
 			int fileDiff = Math.abs(loc.getFile() - target.getFile());
@@ -104,7 +106,7 @@ public class BishopMoveValidator extends PieceMoveValidator {
 					source = tmpLoc;
 					tmpLoc = null;
 				} else {
-					throw new Exception("Ambiguity");
+					throw new MoveException(ErrorCode.AMBIGIUTY);
 				}
 			}
 			int fileDiff = Math.abs(sourceFile - target.getFile());
@@ -134,7 +136,7 @@ public class BishopMoveValidator extends PieceMoveValidator {
 					source = tmpLoc;
 					tmpLoc = null;
 				} else {
-					throw new Exception("Ambiguity");
+					throw new MoveException(ErrorCode.AMBIGIUTY);
 				}
 			}
 			int fileDiff = Math.abs(loc.getFile() - target.getFile());
