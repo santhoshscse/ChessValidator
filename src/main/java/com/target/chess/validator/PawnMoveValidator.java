@@ -69,9 +69,42 @@ public class PawnMoveValidator extends PieceMoveValidator {
 
 	private Location fillSourceWithFileRank(Board board, Player player, Location source, Location target,
 			boolean isCapture) {
+
 		Piece srcPiece = board.getPieceByLocation(source);
 		if (srcPiece.getPieceType() == PAWN) {
-			return source;
+			boolean isWhite = ChessUtil.isWhite(player);
+			if (isWhite) {
+				if (isCapture) {
+
+					if (source.getRank() + 1 == target.getRank() && source.getFile() == target.getFile()) {
+						return source;
+					}
+				} else {
+					if (source.getRank() + 1 == target.getRank() && source.getFile() == target.getFile()) {
+						return source;
+					} else if (source.getRank() == '2' && source.getRank() + 2 == target.getRank()
+							&& source.getFile() == target.getFile()) {
+						return source;
+					}
+				}
+
+			} else {
+
+				if (isCapture) {
+					if (source.getRank() - 1 == target.getRank() && source.getFile() == target.getFile()) {
+						return source;
+					}
+				} else {
+					if (source.getRank() - 1 == target.getRank() && source.getFile() == target.getFile()) {
+						return source;
+					} else if (source.getRank() == '7' && source.getFile() == target.getRank()
+							&& source.getFile() == target.getFile()) {
+						return source;
+					}
+
+				}
+			}
+			return null;
 		}
 		return null;
 	}

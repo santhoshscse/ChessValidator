@@ -56,7 +56,13 @@ public class KnightMoveValidator extends PieceMoveValidator {
 			boolean isCapture) {
 		Piece srcPiece = board.getPieceByLocation(source);
 		if (srcPiece.getPieceType() == KNIGHT) {
-			return source;
+			int fileDiff = Math.abs(source.getFile() - target.getFile());
+			int rankDiff = Math.abs(source.getRank() - target.getRank());
+			if (fileDiff == 2 && rankDiff == 1) {
+				return source;
+			} else if (fileDiff == 1 && rankDiff == 2) {
+				return source;
+			}
 		}
 		return null;
 	}

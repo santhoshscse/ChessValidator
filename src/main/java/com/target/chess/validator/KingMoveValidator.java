@@ -53,10 +53,10 @@ public class KingMoveValidator extends PieceMoveValidator {
 	}
 
 	private Location fillSourceWithFileRank(Board board, Player player, Location source, Location target,
-			boolean isCapture) {
+			boolean isCapture) throws Exception {
 		Piece srcPiece = board.getPieceByLocation(source);
 		if (srcPiece.getPieceType() == KING) {
-			return source;
+			return fillSource(board, player, target, isCapture);
 		}
 		return null;
 	}
@@ -122,19 +122,16 @@ public class KingMoveValidator extends PieceMoveValidator {
 	private Location fillSource(Board board, Player player, Location target, boolean isCapture) throws Exception {
 		boolean isWhite = ChessUtil.isWhite(player);
 
-		List<Location> locList = board.getAllLocationsOfPiece(KING, isWhite);
-
+		Location loc = board.getLocationOfKing(isWhite);
 		Location source = null;
-		for (Location loc : locList) {
-			int fileDiff = Math.abs(loc.getFile() - target.getFile());
-			int rankDiff = Math.abs(loc.getRank() - target.getRank());
-			if (fileDiff == 1 && rankDiff == 1) {
-				source = loc;
-			} else if (fileDiff == 1 && rankDiff == 0) {
-				source = loc;
-			} else if (fileDiff == 0 && rankDiff == 1) {
-				source = loc;
-			}
+		int fileDiff = Math.abs(loc.getFile() - target.getFile());
+		int rankDiff = Math.abs(loc.getRank() - target.getRank());
+		if (fileDiff == 1 && rankDiff == 1) {
+			source = loc;
+		} else if (fileDiff == 1 && rankDiff == 0) {
+			source = loc;
+		} else if (fileDiff == 0 && rankDiff == 1) {
+			source = loc;
 		}
 		return source;
 	}

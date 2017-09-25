@@ -83,6 +83,8 @@ public abstract class PieceMoveValidator {
 					if (validatedSrcLoc != null) {
 						return true;
 					}
+				} catch (MoveException me) {
+
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

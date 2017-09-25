@@ -56,7 +56,24 @@ public class QueenMoveValidator extends PieceMoveValidator {
 			boolean isCapture) {
 		Piece srcPiece = board.getPieceByLocation(source);
 		if (srcPiece.getPieceType() == QUEEN) {
-			return source;
+			if (source.getRank() == target.getRank() && source.getFile() != target.getFile()) {
+				if (!isPieceExist(board, source, target, MoveType.MoveAlongFile)) {
+					return source;
+				}
+			}
+
+			if (source.getRank() != target.getRank() && source.getFile() == target.getFile()) {
+				if (!isPieceExist(board, source, target, MoveType.MoveAlongRank)) {
+					return source;
+				}
+			}
+			int fileDiff = Math.abs(source.getFile() - target.getFile());
+			int rankDiff = Math.abs(source.getRank() - target.getRank());
+			if (fileDiff == rankDiff) {
+				if (!isPieceExist(board, source, target, MoveType.MoveAlongFileRank)) {
+					return source;
+				}
+			}
 		}
 		return null;
 	}
@@ -78,7 +95,7 @@ public class QueenMoveValidator extends PieceMoveValidator {
 					throw new MoveException(ErrorCode.AMBIGIUTY);
 				}
 			}
-			if (loc.getRank() == sourceRank && loc.getFile() != target.getFile()) {
+			if (sourceRank == target.getRank() && loc.getFile() != target.getFile()) {
 				if (!isPieceExist(board, loc, target, MoveType.MoveAlongFile)) {
 					tmpLoc = loc;
 				}
@@ -107,7 +124,7 @@ public class QueenMoveValidator extends PieceMoveValidator {
 					throw new MoveException(ErrorCode.AMBIGIUTY);
 				}
 			}
-			if (loc.getRank() != target.getRank() && loc.getFile() == sourceFile) {
+			if (loc.getRank() != target.getRank() && sourceFile == target.getFile()) {
 				if (!isPieceExist(board, loc, target, MoveType.MoveAlongRank)) {
 					tmpLoc = loc;
 				}

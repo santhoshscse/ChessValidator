@@ -1,21 +1,13 @@
 package com.target.chess;
 
+import org.testng.annotations.Test;
+
 import com.target.chess.handler.ChessGameFactory;
 
 public class ChessCommandTest {
-	public static void main(String[] args) throws Exception {
-		rookMoveTest();
 
-		knightMoveTest();
-
-		bishopMoveTest();
-
-		queenMoveTest();
-
-		kingMoveTest();
-	}
-
-	private static void kingMoveTest() throws Exception {
+	@Test
+	public void kingMoveTest() throws Exception {
 		try {
 			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
@@ -36,7 +28,8 @@ public class ChessCommandTest {
 		}
 	}
 
-	private static void queenMoveTest() throws Exception {
+	@Test
+	void queenMoveTest() throws Exception {
 		try {
 			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
@@ -53,7 +46,8 @@ public class ChessCommandTest {
 		}
 	}
 
-	private static void bishopMoveTest() throws Exception {
+	@Test
+	void bishopMoveTest() throws Exception {
 		try {
 			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
@@ -70,7 +64,8 @@ public class ChessCommandTest {
 		}
 	}
 
-	private static void knightMoveTest() throws Exception {
+	@Test
+	void knightMoveTest() throws Exception {
 		try {
 			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();
@@ -87,7 +82,8 @@ public class ChessCommandTest {
 		}
 	}
 
-	private static void rookMoveTest() throws Exception {
+	@Test
+	void rookMoveTest() throws Exception {
 		try {
 			ChessGame game = ChessGameFactory.getChessGame();
 			String out = game.display();

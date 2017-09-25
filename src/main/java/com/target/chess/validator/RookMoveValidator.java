@@ -56,7 +56,15 @@ public class RookMoveValidator extends PieceMoveValidator {
 			boolean isCapture) {
 		Piece srcPiece = board.getPieceByLocation(source);
 		if (srcPiece.getPieceType() == ROOK) {
-			return source;
+			if (source.getRank() == target.getRank() && source.getFile() != target.getFile()) {
+				if (!isPieceExist(board, source, target, MoveType.MoveAlongFile)) {
+					return source;
+				}
+			} else if (source.getRank() != target.getRank() && source.getFile() == target.getFile()) {
+				if (!isPieceExist(board, source, target, MoveType.MoveAlongRank)) {
+					return source;
+				}
+			}
 		}
 		return null;
 	}

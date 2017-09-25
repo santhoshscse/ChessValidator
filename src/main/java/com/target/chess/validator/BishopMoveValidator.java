@@ -56,7 +56,13 @@ public class BishopMoveValidator extends PieceMoveValidator {
 			boolean isCapture) {
 		Piece srcPiece = board.getPieceByLocation(source);
 		if (srcPiece.getPieceType() == BISHOP) {
-			return source;
+			int fileDiff = Math.abs(source.getFile() - target.getFile());
+			int rankDiff = Math.abs(source.getRank() - target.getRank());
+			if (fileDiff == rankDiff) {
+				if (!isPieceExist(board, source, target, MoveType.MoveAlongFileRank)) {
+					return source;
+				}
+			}
 		}
 		return null;
 	}
