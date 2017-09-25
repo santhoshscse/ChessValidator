@@ -21,6 +21,12 @@ public abstract class PieceMoveValidator {
 
 	public final Move validateCommandAndGetMove(Board board, Player player, Command command, Location enPassantLoc)
 			throws Exception {
+		return validate(board, player, command, enPassantLoc);
+
+	}
+
+	private Move validate(Board board, Player player, Command command, Location enPassantLoc)
+			throws Exception {
 		boolean isCapture = command.isCapture();
 		Location target = command.getTargetLocation();
 
@@ -39,14 +45,13 @@ public abstract class PieceMoveValidator {
 
 		validateCategory(srcPiece, tarPiece);
 
-		validateCheckMove(board, move);
+		//			validateCheckMove(board, move);
 
 		move.setSourcePiece(srcPiece);
 		move.setTargetPiece(tarPiece);
 
 		move.setEnPassant(getEnPassant(board, source, target));
 		return move;
-
 	}
 
 	private void validateCheckMove(Board board, Move move) throws Exception {
@@ -154,24 +159,37 @@ public abstract class PieceMoveValidator {
 		char endFile;
 		char startRank;
 		char endRank;
+		int fileInc;
+		int rankInc;
 		if (source.getFile() > target.getFile()) {
 			startFile = target.getFile();
 			endFile = source.getFile();
+			fileInc = 1;
+			startRank = target.getRank();
+			endRank = source.getRank();
+			if (source.getRank() > target.getRank()) {
+				rankInc = 1;
+			} else {
+				rankInc = -1;
+			}
 		} else {
 			startFile = source.getFile();
 			endFile = target.getFile();
-		}
-
-		if (source.getRank() > target.getRank()) {
-			startRank = target.getRank();
-			endRank = source.getRank();
-		} else {
+			fileInc = -1;
 			startRank = source.getRank();
 			endRank = target.getRank();
+			if (source.getRank() > target.getRank()) {
+				rankInc = 1;
+			} else {
+				rankInc = -1;
+			}
 		}
 
-		for (char file = (char) (startFile + 1), rank = (char) (startRank + 1); file < endFile
-				&& rank < endRank; file++, rank++) {
+		for (char file = (char) (startFile + fileInc), rank = (char) (startRank + rankInc);
+
+		fileInc == 1 ? file < endFile : file < endFile && rankInc == 1 ? rank < endRank : rank > endRank;
+
+		file += fileInc, rank += rankInc) {
 			Location tmpLoc = new Location();
 			tmpLoc.setFile(file);
 			tmpLoc.setRank(rank);
