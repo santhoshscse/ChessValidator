@@ -1,7 +1,5 @@
 package com.target.chess.validator;
 
-import java.util.List;
-
 import com.target.chess.exception.MoveException;
 import com.target.chess.exception.MoveException.ErrorCode;
 import com.target.chess.model.Board;
@@ -25,8 +23,7 @@ public abstract class PieceMoveValidator {
 
 	}
 
-	private Move validate(Board board, Player player, Command command, Location enPassantLoc)
-			throws Exception {
+	private Move validate(Board board, Player player, Command command, Location enPassantLoc) throws Exception {
 		boolean isCapture = command.isCapture();
 		Location target = command.getTargetLocation();
 
@@ -45,58 +42,11 @@ public abstract class PieceMoveValidator {
 
 		validateCategory(srcPiece, tarPiece);
 
-		//			validateCheckMove(board, move);
-
 		move.setSourcePiece(srcPiece);
 		move.setTargetPiece(tarPiece);
 
 		move.setEnPassant(getEnPassant(board, source, target));
 		return move;
-	}
-
-	private void validateCheckMove(Board board, Move move) throws Exception {
-		boolean isCheck = isCheckMove(board, move);
-		if (isCheck) {
-			throw new MoveException(ErrorCode.CHECKMOVE);
-		}
-	}
-
-	private boolean isCheckMove(Board board, Move move) {
-		board.movePiece(move.getSourceLocation(), move.getTargetLocation(), move.isEnPassantCapture());
-		Player player = move.getPlayer();
-		boolean isNextWhite;
-		if (player == Player.B) {
-			player = Player.W;
-			isNextWhite = true;
-		} else {
-			player = Player.B;
-			isNextWhite = false;
-		}
-		boolean isCurrWhite = !isNextWhite;
-		Location kingLoc = board.getLocationOfKing(isCurrWhite);
-
-		for (PieceType type : PieceType.values()) {
-			List<Location> locList = board.getAllLocationsOfPiece(type, isNextWhite);
-			for (Location srcLoc : locList) {
-				Command command = new Command();
-				command.setSourceLocation(srcLoc);
-				command.setTargetLocation(kingLoc);
-				command.setCapture(true);
-				command.setSourcePiece(type);
-				try {
-					Location validatedSrcLoc = getSourceLocation(board, player, command);
-					if (validatedSrcLoc != null) {
-						return true;
-					}
-				} catch (MoveException me) {
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return false;
 	}
 
 	private void validateCaptureOrEnPassantCapture(Location enPassant, boolean isCapture, Location target, Move move,
